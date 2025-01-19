@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+  - port: 5432                              # Порт, на котором сервис будет слушать 
+    targetPort: 5432                        # Порт, на который сервис будет перенаправлять трафик к подам
+  selector:
+    app: postgres

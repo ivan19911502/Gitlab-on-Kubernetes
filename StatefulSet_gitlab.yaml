@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitlab
+spec:
+  serviceName: gitlab
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab
+  template:
+    metadata:
+      labels:
+        app: gitalab
+    spec:
+      containers:
+      - name: gitlab
+        image: gitlab/gitlab-ce:latest
+        env:
+        - name: GITLAB_CONFIG
+          value: |
+            external_url 'http://192.168.1.100'          # тут надо добавить свой хостовой ip...
+            gitlab_rails['db_adapter'] = 'postgresql'
+            gitlab_rails['db_encoding'] = 'unicode'
+            gitlab_rails['db_host'] = 'postgres'
+            gitlab_rails['db_port'] = '5432'
+            gitlab_rails['db_username'] = 'gitlab'
+            gitlab_rails['db_password'] = '123'  # Тот же пароль, что и в PostgreSQL
+            gitlab_rails['db_database'] = 'gitlab_production'
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: gitlab-storage
+          mountPath: /var/opt/gitlab
+      volumes:
+      - name: gitlab-storage
+        persistentVolumeClaim:
+          claimName: gitlab-pvc
