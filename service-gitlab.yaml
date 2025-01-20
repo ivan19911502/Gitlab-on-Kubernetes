@@ -2,9 +2,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab
+  namespace: prod
 spec:
+  type: ClusterIP
   ports:
-  - port: 80                              # Порт, на котором сервис будет слушать 
-    targetPort: 80                        # Порт, на который сервис будет перенаправлять трафик к подам
+  - port: 80                              # The port on which the service will listen 
+    targetPort: 80                        # The port to which the service will redirect traffic to the pods
   selector:
     app: gitlab
