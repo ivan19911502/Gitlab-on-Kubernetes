@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-pv
+  name: postgres-pv_gitlab
+  namespace: prod
 spec:
   capacity:
     storage: 2Gi
@@ -15,7 +16,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: postgres-pvc_gitlab
 spec:
   accessModes:
     - ReadWriteOnce
