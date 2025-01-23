@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: gitlab
-  namespace: prod
+  namespace: gitlab
 spec:
-  serviceName: gitlab
+  serviceName: "gitlab_ce"
   replicas: 1
   selector:
     matchLabels:
@@ -20,7 +20,7 @@ spec:
         env:
         - name: GITLAB_CONFIG
           value: |
-            external_url 'https://git-lab.devlaba.online'          # host for connetction gitlab
+            external_url '<%= ENV["GITLAB_URL"] %>'          # host for connetction gitlab
             gitlab_rails['db_adapter'] = 'postgresql'
             gitlab_rails['db_encoding'] = 'unicode'
             gitlab_rails['db_host'] = 'postgres'
@@ -33,6 +33,18 @@ spec:
               secretKeyRef:
                 name: secret-for-posetgres
                 key: postgres-password
+          - name: GITLAB_URL
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-gitlab-url
+                key: gitlab-url
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "3"
         ports:
         - containerPort: 80
         volumeMounts:
@@ -41,4 +53,4 @@ spec:
       volumes:
       - name: gitlab-storage
         persistentVolumeClaim:
-          claimName: gitlab-pvc
+          claimName: gitlab_ce-gitlab-pvc
