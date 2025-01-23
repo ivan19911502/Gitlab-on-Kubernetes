@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres_gitlab
-  namespace: prod
+  namespace: gitlab
 spec:
   serviceName: "postgres"
   replicas: 1
@@ -27,6 +27,13 @@ spec:
                 key: postgres-password  
         - name: POSTGRES_DB
           value: gitlab_production
+         resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "3"
         ports:
         - containerPort: 5432
         volumeMounts:
@@ -35,4 +42,4 @@ spec:
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
-          claimName: postgres-pvc_gitlab
+          claimName: postgres-gitlab-pvc
