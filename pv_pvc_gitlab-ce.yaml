@@ -5,11 +5,11 @@ metadata:
   namespace: gitlab
 spec:
   capacity:
-    storage: 10Gi
-    accessModes: 
-      - ReadWriteOnce
-    hostPath:
-      path: /data/gitlab
+    storage: 20Gi
+  accessModes: 
+    - ReadWriteOnce
+  hostPath:
+    path: /data/gitlab
 
 -----------
 
@@ -23,6 +23,6 @@ spec:
     -ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 20Gi
 
 

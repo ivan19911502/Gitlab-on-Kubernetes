@@ -16,35 +16,65 @@ spec:
     spec:
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:latest
+        image: gitlab/gitlab-ce:17.6.4
         env:
         - name: GITLAB_CONFIG
           value: |
-            external_url '<%= ENV["GITLAB_URL"] %>'          # host for connetction gitlab
-            gitlab_rails['db_adapter'] = 'postgresql'
-            gitlab_rails['db_encoding'] = 'unicode'
-            gitlab_rails['db_host'] = 'postgres'
-            gitlab_rails['db_port'] = '5432'
-            gitlab_rails['db_username'] = 'gitlab'
+            external_url '<%= ENV["GITLAB_URL"] %>'                          # host for connetction gitlab
+            gitlab_rails['db_adapter'] = '<%= ENV["DB_ADAPTER"] %>'          
+            gitlab_rails['db_encoding'] = '<%= ENV["DB_ENCODING"] %>'
+            gitlab_rails['db_host'] = '<%= ENV["DB_HOST"] %>'
+            gitlab_rails['db_port'] = <%= ENV["DB_PORT"] %>'
+            gitlab_rails['db_username'] = '<%= ENV["DB_USERNAME"] %>'
             gitlab_rails['db_password'] = '<%= ENV["POSTGRES_PASSWORD"] %>'  # Password coding Base64 from postgres
-            gitlab_rails['db_database'] = 'gitlab_production'
+            gitlab_rails['db_database'] = '<%= ENV["DB_DATABASE"] %>'
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: secret-for-posetgres
+                name: secret-for-posetgres-gitlab
                 key: postgres-password
           - name: GITLAB_URL
             valueFrom:
               secretKeyRef:
-                name: secret-for-gitlab-url
+                name: secret-for-posetgres-gitlab
                 key: gitlab-url
+          - name: DB_ADAPTER
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_adapter
+          - name: DB_ENCODING
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_encoding
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_host
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_port
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_username
+          - name: DB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_database 
         resources:
           requests:
             memory: "1Gi"
             cpu: "500m"
           limits:
             memory: "4Gi"
-            cpu: "3"
+            cpu: "2"
         ports:
         - containerPort: 80
         volumeMounts:
