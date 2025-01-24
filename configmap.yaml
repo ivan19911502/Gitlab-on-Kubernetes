@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab_rb
+data:
+  gitlab_omnibus_config: |
+    external_url ENV['EXTERNAL_URL'];
+    root_pass = ENV['GITLAB_ROOT_PASSWORD'];
+    postgresql['enable'] = false;
+    gitlab_rails['db_host'] = ENV['DB_HOST'];
+    gitlab_rails['db_password'] = ENV['DB_PASSWORD'];
+    gitlab_rails['db_username'] = ENV['DB_USER'];
+    gitlab_rails['db_database'] = ENV['DB_DATABASE'];
+    gitlab_rails['db_port'] = ENV['DB_PORT']
+    gitlab_rails['db_host'] = ENV['DB_HOST']
+    gitlab_rails['db_adapter'] = ENV['DB_ADAPTER']

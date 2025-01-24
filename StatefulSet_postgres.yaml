@@ -19,18 +19,24 @@ spec:
         image: postgres:17.2
         env:
         - name: POSTGRES_USER
-          value: gitlab
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_username  
         - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: secret-for-posetgres
-                key: postgres-password  
+                name: secret-for-posetgres-gitlab
+                key: postgres-password
         - name: POSTGRES_DB
-          value: gitlab_production
+            valueFrom:
+              secretKeyRef:
+                name: secret-for-posetgres-gitlab
+                key: db_database
          resources:
           requests:
-            memory: "1Gi"
-            cpu: "500m"
+            memory: "512Mi"
+            cpu: "250m"
           limits:
             memory: "4Gi"
             cpu: "2"
