@@ -51,6 +51,28 @@ spec:
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
+        command:
+        - "bash"
+        - "-c"
+        - |
+          # Extract replica name from the pod's hostname (e.g., pg-slave-0)
+          REPLICA_NAME="postgres_replica"
+          rm -rf /var/lib/postgresql/data/* # Ensure the directory is empty
+          until pg_isready — host=pg-master — port=5432; do
+          echo "Waiting for master to be ready…"
+          sleep 2
+          done
+          pg_basebackup -h pg-master -D /tmp/pgdata -U postgres -v -P — wal-method=stream
+          mv /tmp/pgdata/* /var/lib/postgresql/data/
+          chown -R postgres:postgres /var/lib/postgresql/data/
+          psql -h pg-master -U postgres -c "SELECT pg_create_physical_replication_slot('${REPLICA_NAME}');"
+          echo "primary_slot_name = '${REPLICA_NAME}'" | tee -a /var/lib/postgresql/data/postgresql.conf
+          echo "primary_conninfo = 'host=pg-master port=5432 user=postgres password=password application_name=${REPLICA_NAME}'" | tee -a /var/lib/postgresql/data//postgresql.conf
+          touch /var/lib/postgresql/data/standby.signal
+          chmod 700 /var/lib/postgresql/data/
+          rm -rf /tmp/pgdata
+          echo "Starting PostgreSQL…"
+          postgres
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:

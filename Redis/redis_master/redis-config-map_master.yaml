@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: redis-master
-  namespace: redis
+  namespace: gitlab
 data:
   redis.conf: |
     appendonly no

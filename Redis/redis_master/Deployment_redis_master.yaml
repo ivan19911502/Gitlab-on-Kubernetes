@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-master
-  namespace: redis
+  namespace: gitlab
 spec:
   replicas: 1
   selector:
