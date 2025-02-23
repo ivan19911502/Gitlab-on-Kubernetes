@@ -16,6 +16,16 @@ spec:
         app: postgres
         role: master
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - postgres
+            topologyKey: "kubernetes.io/hostname"
       containers:
       - name: postgres
         image: postgres:17.2
@@ -53,3 +63,6 @@ spec:
       - name: postgres-storage
         persistentVolumeClaim:
           claimName: postgres_master-gitlab-pvc
+      - name: postgres-config
+        configMap:
+          name: postgres-master-config

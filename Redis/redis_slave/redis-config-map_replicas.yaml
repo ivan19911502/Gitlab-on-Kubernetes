@@ -6,4 +6,6 @@ metadata:
 data:
   redis.conf: |+
     masterauth  Securep@55Here
-    replicaof redis-master.redis.svc.cluster.local 6379
+    replicaof redis-master 6379
+    replica-read-only yes
+    replica-serve-stale-data yes

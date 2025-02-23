@@ -16,6 +16,16 @@ spec:
         app: postgres
         role: replica
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - postgres
+            topologyKey: "kubernetes.io/hostname"
       containers:
       - name: postgres
         image: postgres:17.2
