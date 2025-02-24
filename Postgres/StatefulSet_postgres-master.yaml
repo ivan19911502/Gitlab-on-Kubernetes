@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-master_gitlab
+  name: postgres-master-gitlab
   namespace: gitlab
 spec:
   serviceName: "postgres-master"
@@ -16,6 +16,10 @@ spec:
         app: postgres
         role: master
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -31,23 +35,23 @@ spec:
         image: postgres:17.2
         env:
         - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: secret-for-posetgres-gitlab
-                key: db_username  
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: db_username  
         - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: secret-for-posetgres-gitlab
-                key: postgres-password
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: postgres-password
         - name: POSTGRES_DB
-            valueFrom:
-              secretKeyRef:
-                name: secret-for-posetgres-gitlab
-                key: db_database
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: db_database
         - name: REPLICATION_MODE
-            value: "master"
-         resources:
+          value: "master"
+        resources:
           requests:
             memory: "512Mi"
             cpu: "250m"
@@ -59,10 +63,16 @@ spec:
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /var/lib/postgresql/data/postgresql.conf
+          subPath: postgresql.conf
+        - name: postgres-config
+          mountPath: /var/lib/postgresql/data/pg_hba.conf
+          subPath: pg_hba.conf
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
-          claimName: postgres_master-gitlab-pvc
+          claimName: postgres-master-gitlab-pvc
       - name: postgres-config
         configMap:
           name: postgres-master-config

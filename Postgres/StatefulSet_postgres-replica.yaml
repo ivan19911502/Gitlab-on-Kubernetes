@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-replica_gitlab
+  name: postgres-replica-gitlab
   namespace: gitlab
 spec:
   serviceName: "postgres-replica"
@@ -16,6 +16,9 @@ spec:
         app: postgres
         role: replica
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -31,25 +34,25 @@ spec:
         image: postgres:17.2
         env:
         - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: secret-for-posetgres-gitlab
-                key: db_username  
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: db_username  
         - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: secret-for-posetgres-gitlab
-                key: postgres-password
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: postgres-password
         - name: POSTGRES_DB
-            valueFrom:
-              secretKeyRef:
-                name: secret-for-posetgres-gitlab
-                key: db_database
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: db_database
         - name: REPLICATION_MODE
-            value: "replica"
+          value: "replica"
         - name: MASTER_HOST
-            value: "postgres-master"
-         resources:
+          value: "postgres-master"
+        resources:
           requests:
             memory: "512Mi"
             cpu: "250m"
@@ -65,25 +68,26 @@ spec:
         - "bash"
         - "-c"
         - |
-          # Extract replica name from the pod's hostname (e.g., pg-slave-0)
-          REPLICA_NAME="postgres_replica"
-          rm -rf /var/lib/postgresql/data/* # Ensure the directory is empty
-          until pg_isready — host=pg-master — port=5432; do
-          echo "Waiting for master to be ready…"
-          sleep 2
+          rm -rf /var/lib/postgresql/data/*
+          until PGPASSWORD=$POSTGRES_PASSWORD pg_isready --host=$MASTER_HOST --port=5432; do
+            echo "Waiting for master to be ready..."
+            sleep 2
           done
-          pg_basebackup -h pg-master -D /tmp/pgdata -U postgres -v -P — wal-method=stream
-          mv /tmp/pgdata/* /var/lib/postgresql/data/
+          PGPASSWORD=$POSTGRES_PASSWORD pg_basebackup -h $MASTER_HOST -D /var/lib/postgresql/data -U $POSTGRES_USER -v -P --wal-method=stream
+      
           chown -R postgres:postgres /var/lib/postgresql/data/
-          psql -h pg-master -U postgres -c "SELECT pg_create_physical_replication_slot('${REPLICA_NAME}');"
-          echo "primary_slot_name = '${REPLICA_NAME}'" | tee -a /var/lib/postgresql/data/postgresql.conf
-          echo "primary_conninfo = 'host=pg-master port=5432 user=postgres password=password application_name=${REPLICA_NAME}'" | tee -a /var/lib/postgresql/data//postgresql.conf
+          PGPASSWORD=$POSTGRES_PASSWORD psql -h $MASTER_HOST  -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT pg_create_physical_replication_slot('replica1');"
+          echo "primary_slot_name = 'replica1'" |  tee -a /var/lib/postgresql/data/postgresql.conf
+          echo "primary_conninfo = 'host=$MASTER_HOST port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD application_name=replica1'" |  tee -a  /var/lib/postgresql/data//postgresql.conf
           touch /var/lib/postgresql/data/standby.signal
           chmod 700 /var/lib/postgresql/data/
-          rm -rf /tmp/pgdata
-          echo "Starting PostgreSQL…"
+          
+          echo "Starting PostgreSQL..."
           postgres
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
-          claimName: postgres_replica-gitlab-pvc
+          claimName: postgres-replica-gitlab-pvc
+      - name: postgres-config
+        configMap:
+          name: postgres-master-config

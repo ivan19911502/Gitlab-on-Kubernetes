@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-gitlab-pv
+  name: postgres-master-gitlab-pv
   namespace: gitlab
 spec:
   capacity:
@@ -9,14 +9,14 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /data/postgres/postgres_master-gitlab
+    path: /data/postgres/postgres-master-gitlab
   
--------
+---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres_master-gitlab-pvc
+  name: postgres-master-gitlab-pvc
   namespace: gitlab
 spec:
   accessModes:
@@ -25,12 +25,12 @@ spec:
     requests:
       storage: 20Gi
 
--------
+---
 
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres_replica-gitlab-pv
+  name: postgres-replica-gitlab-pv
   namespace: gitlab
 spec:
   capacity:
@@ -38,14 +38,14 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /data/postgres/postgres_replica-gitlab 
+    path: /data/postgres/postgres-replica-gitlab 
 
--------
+---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres_replica-gitlab-pvc
+  name: postgres-replica-gitlab-pvc
   namespace: gitlab
 spec:
   accessModes:
