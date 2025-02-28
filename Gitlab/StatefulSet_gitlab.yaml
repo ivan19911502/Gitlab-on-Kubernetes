@@ -4,7 +4,7 @@ metadata:
   name: gitlab
   namespace: gitlab
 spec:
-  serviceName: "gitlab_ce"
+  serviceName: "gitlab-ce"
   replicas: 1
   selector:
     matchLabels:
@@ -12,11 +12,20 @@ spec:
   template:
     metadata:
       labels:
-        app: gitalab
+        app: gitlab
     spec:
+      securityContext:       
+        fsGroup: 998
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:17.6.4
+        image: gitlab/gitlab-ce:16.8.2-ce.0
+        securityContext:
+          privileged: true 
+          runAsUser: 0     
+          capabilities:
+            add:
+            - SYS_ADMIN    
+            - NET_ADMIN
         env:                                              
         # # This is a free-form env var that GitLab Omnibus uses to configure
         # everything. We're passing this in from a configmap and pulling some
@@ -30,47 +39,47 @@ spec:
         - name: GITLAB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: gitlab-root-password
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: postgres-password
         - name: GITLAB_URL
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: gitlab-url
         - name: DB_ADAPTER
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: db_adapter
         - name: DB_ENCODING
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: db_encoding
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: db_host
         - name: DB_PORT
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: db_port
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: db_username
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:
-              name: secret-for-posetgres-gitlab
+              name: secret-for-postgres-gitlab
               key: db_database 
         resources:
           requests:
@@ -93,4 +102,13 @@ spec:
       volumes:
       - name: gitlab-storage
         persistentVolumeClaim:
-          claimName: gitlab_ce-gitlab-pvc
+          claimName: gitlab-ce-gitlab-pvc
+      - name: gitlab-etc
+        persistentVolumeClaim:
+          claimName: gitlab-etc-pvc
+      - name: gitlab-data
+        persistentVolumeClaim:
+          claimName: gitlab-data-pvc
+      - name: gitlab-log
+        persistentVolumeClaim:
+          claimName: gitlab-log-pvc

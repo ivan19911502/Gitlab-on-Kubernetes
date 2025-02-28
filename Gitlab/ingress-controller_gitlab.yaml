@@ -9,7 +9,9 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix  
             backend:
-              serviceName: gitlab_ce
-              servicePort: 80
-
+              service:        
+                name: gitlab-ce
+                port:
+                  number: 80
