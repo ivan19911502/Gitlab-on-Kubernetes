@@ -11,36 +11,22 @@ spec:
   hostPath:
     path: /data/gitlab
 
----
 
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: gitlab-etc-pv
-  namespace: gitlab
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes: 
-    - ReadWriteOnce
-  hostPath:
-    path: /data/gitlab-etc
 
 ---
 
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: gitlab-data-pv
+  name: gitlab-log-pv
   namespace: gitlab
 spec:
   capacity:
-    storage: 10Gi
+    storage: 5Gi
   accessModes: 
     - ReadWriteOnce
   hostPath:
-    path: /data/gitlab-data
-
+    path: /data/gitlab-log
 
 ---
 
@@ -56,31 +42,6 @@ spec:
     requests:
       storage: 20Gi
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: gitlab-etc-pvc
-  namespace: gitlab
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: gitlab-data-pvc
-  namespace: gitlab
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
 
 ---
 apiVersion: v1
@@ -94,4 +55,3 @@ spec:
   resources:
     requests:
       storage: 5Gi
-

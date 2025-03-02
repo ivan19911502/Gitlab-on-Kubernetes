@@ -4,13 +4,48 @@ metadata:
   name: gitlab-rb
   namespace: gitlab
 data:
+  EXTERNAL_URL: http://git-lab.devlaba.online
   gitlab_omnibus_config: |
-    external_url "#{ENV['GITLAB_URL']}"
-    gitlab_rails['initial_root_password'] = "#{ENV['GITLAB_ROOT_PASSWORD']}"
-    gitlab_rails['db_adapter'] = "#{ENV['DB_ADAPTER']}"
-    gitlab_rails['db_encoding'] = "#{ENV['DB_ENCODING']}"
-    gitlab_rails['db_host'] = "#{ENV['DB_HOST']}"
-    gitlab_rails['db_port'] = "#{ENV['DB_PORT']}"
-    gitlab_rails['db_username'] = "#{ENV['DB_USERNAME']}"
-    gitlab_rails['db_password'] = "#{ENV['DB_PASSWORD']}"
-    gitlab_rails['db_database'] = "#{ENV['DB_DATABASE']}"
+    gitlab_rails['initial_root_password'] = ENV['GITLAB_ROOT_PASSWORD']
+    gitlab_rails['db_adapter'] = ENV['DB_ADAPTER']
+    gitlab_rails['db_encoding'] = ENV['DB_ENCODING'] 
+    gitlab_rails['db_host'] = ENV['DB_HOST']
+    gitlab_rails['db_port'] = ENV['DB_PORT']
+    gitlab_rails['db_username'] = ENV['DB_USERNAME']
+    gitlab_rails['db_password'] = ENV['DB_PASSWORD']
+    gitlab_rails['db_database'] = ENV['DB_DATABASE']
+    postgresql['enable'] = false
+
+    redis['enable'] = false
+    gitlab_rails['redis_host'] = 'redis-master'
+    gitlab_rails['redis_port'] = 6379
+    gitlab_rails['redis_ssl'] = false
+    gitlab_rails['redis_password'] = 'Securep@55Here'
+    gitlab_rails['redis_socket'] = false
+
+    gitlab_rails['auto_migrate'] = true
+    gitlab_rails['db_migrate'] = true
+
+    gitlab_workhorse['listen_network'] = "tcp"
+    gitlab_workhorse['listen_addr'] = "0.0.0.0:8181"
+    letsencrypt['enable'] = false
+
+    nginx['redirect_http_to_https'] = false
+
+    # timezone
+    gitlab_rails['time_zone'] = 'Asia/Dhaka'
+
+    # disable heavy features
+    registry['enable'] = false
+    nginx['enable'] = false
+    logrotate['enable'] = false
+    gitlab_kas['enable'] = false
+    monitoring_role['enable'] = false
+    prometheus['enable'] = false
+    alertmanager['enable'] = false
+    node_exporter['enable'] = false
+    redis_exporter['enable'] = false
+    postgres_exporter['enable'] = false
+    gitlab_exporter['enable'] = false
+    prometheus_monitoring['enable'] = false
+    grafana['enable'] = false

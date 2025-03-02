@@ -14,18 +14,9 @@ spec:
       labels:
         app: gitlab
     spec:
-      securityContext:       
-        fsGroup: 998
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:16.8.2-ce.0
-        securityContext:
-          privileged: true 
-          runAsUser: 0     
-          capabilities:
-            add:
-            - SYS_ADMIN    
-            - NET_ADMIN
+        image: gitlab/gitlab-ce:17.6.0-ce.0
         env:                                              
         # # This is a free-form env var that GitLab Omnibus uses to configure
         # everything. We're passing this in from a configmap and pulling some
@@ -93,22 +84,13 @@ spec:
         volumeMounts:
         - name: gitlab-storage
           mountPath: /var/opt/gitlab
-        - name: gitlab-etc
-          mountPath: /etc/gitlab
-        - name: gitlab-data
-          mountPath: /gitlab-data
         - name: gitlab-log
           mountPath: /var/log/gitlab
       volumes:
       - name: gitlab-storage
         persistentVolumeClaim:
           claimName: gitlab-ce-gitlab-pvc
-      - name: gitlab-etc
-        persistentVolumeClaim:
-          claimName: gitlab-etc-pvc
-      - name: gitlab-data
-        persistentVolumeClaim:
-          claimName: gitlab-data-pvc
       - name: gitlab-log
         persistentVolumeClaim:
           claimName: gitlab-log-pvc
+      
