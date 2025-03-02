@@ -7,7 +7,6 @@ data:
   gitlab_omnibus_config: |
     external_url "#{ENV['GITLAB_URL']}"
     gitlab_rails['initial_root_password'] = "#{ENV['GITLAB_ROOT_PASSWORD']}"
-    postgresql['enable'] = false
     gitlab_rails['db_adapter'] = "#{ENV['DB_ADAPTER']}"
     gitlab_rails['db_encoding'] = "#{ENV['DB_ENCODING']}"
     gitlab_rails['db_host'] = "#{ENV['DB_HOST']}"
