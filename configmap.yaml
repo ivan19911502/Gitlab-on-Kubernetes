@@ -4,8 +4,8 @@ metadata:
   name: gitlab-rb
   namespace: gitlab
 data:
-  EXTERNAL_URL: http://git-lab.devlaba.online
   gitlab_omnibus_config: |
+    external_url 'http://git-lab.devlaba.online'
     gitlab_rails['initial_root_password'] = ENV['GITLAB_ROOT_PASSWORD']
     gitlab_rails['db_adapter'] = ENV['DB_ADAPTER']
     gitlab_rails['db_encoding'] = ENV['DB_ENCODING'] 
@@ -16,27 +16,29 @@ data:
     gitlab_rails['db_database'] = ENV['DB_DATABASE']
     postgresql['enable'] = false
 
+    nginx['redirect_http_to_https'] = false
+    gitlab_rails['gitlab_https'] = false
+
     redis['enable'] = false
     gitlab_rails['redis_host'] = 'redis-master'
     gitlab_rails['redis_port'] = 6379
-    gitlab_rails['redis_ssl'] = false
+    gitlab_rails['redis_socket'] = '/tmp/redis.sock'
     gitlab_rails['redis_password'] = 'Securep@55Here'
-    gitlab_rails['redis_socket'] = false
+    
 
     gitlab_rails['auto_migrate'] = true
     gitlab_rails['db_migrate'] = true
 
     gitlab_workhorse['listen_network'] = "tcp"
     gitlab_workhorse['listen_addr'] = "0.0.0.0:8181"
-    letsencrypt['enable'] = false
+    
 
-    nginx['redirect_http_to_https'] = false
+
 
     # timezone
     gitlab_rails['time_zone'] = 'Asia/Dhaka'
 
     # disable heavy features
-    registry['enable'] = false
     nginx['enable'] = false
     logrotate['enable'] = false
     gitlab_kas['enable'] = false
@@ -49,3 +51,4 @@ data:
     gitlab_exporter['enable'] = false
     prometheus_monitoring['enable'] = false
     grafana['enable'] = false
+    

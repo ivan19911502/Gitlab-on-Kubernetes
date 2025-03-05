@@ -85,7 +85,6 @@ spec:
               END IF;
           END
           \$\$;"
-          PGPASSWORD=$POSTGRES_PASSWORD psql -h $MASTER_HOST  -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT pg_create_physical_replication_slot('replica1');"
           echo "primary_slot_name = 'replica1'" |  tee -a /var/lib/postgresql/data/postgresql.conf
           echo "primary_conninfo = 'host=$MASTER_HOST port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD application_name=replica1'" |  tee -a  /var/lib/postgresql/data//postgresql.conf
           touch /var/lib/postgresql/data/standby.signal

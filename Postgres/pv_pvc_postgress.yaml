@@ -9,7 +9,8 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /data/postgres/postgres-master-gitlab
+    path: /data/db/postgres-master-gitlab
+     
   
 ---
 
@@ -38,7 +39,8 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /data/postgres/postgres-replica-gitlab 
+    path: /data/db/postgres-replica-gitlab
+     
 
 ---
 

@@ -6,8 +6,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 80                              # The port on which the service will listen 
-    targetPort: 80                        # The port to which the service will redirect traffic to the pods
+  - port: 80                             # The port on which the service will listen 
+    targetPort: 8181                        # The port to which the service will redirect traffic to the pods
   selector:
     app: gitlab
 

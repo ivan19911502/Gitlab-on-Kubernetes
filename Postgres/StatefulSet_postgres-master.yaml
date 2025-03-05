@@ -33,6 +33,7 @@ spec:
       containers:
       - name: postgres
         image: postgres:17.2
+        args: ["-c", "config_file=/etc/postgres/postgresql.conf", "-c", "hba_file=/etc/postgres/pg_hba.conf"]
         env:
         - name: POSTGRES_USER
           valueFrom:
@@ -64,10 +65,10 @@ spec:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
         - name: postgres-config
-          mountPath: /var/lib/postgresql/data/postgresql.conf
+          mountPath: /etc/postgres/postgresql.conf
           subPath: postgresql.conf
         - name: postgres-config
-          mountPath: /var/lib/postgresql/data/pg_hba.conf
+          mountPath: /etc/postgres/pg_hba.conf
           subPath: pg_hba.conf
       volumes:
       - name: postgres-storage
@@ -76,3 +77,4 @@ spec:
       - name: postgres-config
         configMap:
           name: postgres-master-config
+          defaultMode: 0775

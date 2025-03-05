@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:17.6.0-ce.0
-        env:                                              
+        image: gitlab/gitlab-ce:16.11.5-ce.0
+        env:                                           
         # # This is a free-form env var that GitLab Omnibus uses to configure
         # everything. We're passing this in from a configmap and pulling some
         # of the values from the env vars defined below. This is done to
@@ -74,13 +74,13 @@ spec:
               key: db_database 
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "250m"
+            memory: "2Gi"
+            cpu: "500m"
           limits:
-            memory: "4Gi"
-            cpu: "2"
+            memory: "6Gi"
+            cpu: "4"
         ports:
-        - containerPort: 80
+        - containerPort: 8181
         volumeMounts:
         - name: gitlab-storage
           mountPath: /var/opt/gitlab
