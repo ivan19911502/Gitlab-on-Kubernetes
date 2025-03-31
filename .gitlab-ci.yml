@@ -1,0 +1,77 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  # Conf for Docker Hub
+  DOCKER_REGISTRY: docker.io
+  DOCKER_HUB_USERNAME: ivanlab19911502
+  DOCKER_IMAGE: $DOCKER_HUB_USERNAME/myapp
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  KUBE_NAMESPACE: production
+
+build:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+
+    - cd jcat
+    - docker build -t $DOCKER_IMAGE:$IMAGE_TAG .
+    - docker tag $DOCKER_IMAGE:$IMAGE_TAG $DOCKER_IMAGE:latest
+    
+    - docker push $DOCKER_IMAGE:$IMAGE_TAG
+    - docker push $DOCKER_IMAGE:latest
+  tags:
+    - kubernetes
+
+test:
+  stage: test
+  image: maven:3.8-openjdk-17-slim
+  script:
+    - cd jcat/backend
+    - mvn test
+  tags:
+    - kubernetes
+
+deploy:
+  stage: deploy
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  before_script:
+    - kubectl config use-context $KUBE_CONTEXT
+    - |
+      kubectl create secret docker-registry dockerhub-secret \
+        --docker-server=docker.io \
+        --docker-username=$DOCKER_HUB_USERNAME \
+        --docker-password=$DOCKER_HUB_PASSWORD \
+        --docker-email=$GITLAB_USER_EMAIL \
+        -n $KUBE_NAMESPACE \
+        --dry-run=client -o yaml | kubectl apply -f -
+    
+    - sed -i "s|__IMAGE_NAME__|$DOCKER_IMAGE:$IMAGE_TAG|g" jcat_k8s/Deployment_jcat.yaml
+    - sed -i "s|__NAMESPACE__|$KUBE_NAMESPACE|g" jcat_k8s/*.yaml
+    - sed -i "s|__REGISTRY_SECRET__|dockerhub-secret|g" jcat_k8s/Deployment_jcat.yaml
+  script:
+    - kubectl create namespace $KUBE_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+    
+    - kubectl apply -f jcat_k8s/postgres-credentials.yaml
+    - kubectl apply -f jcat_k8s/init-db-script-cm.yaml
+    
+    - kubectl apply -f jcat_k8s/pvc_postgres.yaml
+    
+    - kubectl apply -f jcat_k8s/Deployment_postgres.yaml
+    - kubectl apply -f jcat_k8s/Service_postgres.yaml
+    
+    - kubectl apply -f jcat_k8s/Deployment_jcat.yaml
+    - kubectl apply -f jcat_k8s/Service_jcat.yaml
+    
+    - kubectl rollout status deployment/jcat -n $KUBE_NAMESPACE
+  only:
+    - master
+  tags:
+    - kubernetes
