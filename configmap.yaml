@@ -5,7 +5,7 @@ metadata:
   namespace: gitlab
 data:
   gitlab_omnibus_config: |
-    external_url 'http://git-lab.devlaba.online'
+    external_url 'http://gitlab.taska.space'
     gitlab_rails['initial_root_password'] = ENV['GITLAB_ROOT_PASSWORD']
     gitlab_rails['db_adapter'] = ENV['DB_ADAPTER']
     gitlab_rails['db_encoding'] = ENV['DB_ENCODING'] 

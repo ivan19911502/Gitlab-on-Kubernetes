@@ -10,7 +10,7 @@ data:
     
     [[runners]]
       name = "Kubernetes Runner"
-      url = "http://git-lab.devlaba.online"
+      url = "http://gitlab.taska.space"
       executor = "kubernetes"
       token = "glrt-81kxxkQRkXevquNJXSPs"
       [runners.kubernetes]
