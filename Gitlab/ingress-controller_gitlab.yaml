@@ -5,7 +5,7 @@ metadata:
   namespace: gitlab
 spec:
   rules:
-    - host: http://gitlab.taska.space
+    - host: 'gitlab.taska.space'
       http:
         paths:
           - path: /

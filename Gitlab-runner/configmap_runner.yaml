@@ -12,7 +12,7 @@ data:
       name = "Kubernetes Runner"
       url = "http://gitlab.taska.space"
       executor = "kubernetes"
-      token = "glrt-81kxxkQRkXevquNJXSPs"
+      token = "glrt-UqJ7RLDju58rT4LsHPpo"
       [runners.kubernetes]
         namespace = "gitlab"
         image = "ubuntu:20.04"
