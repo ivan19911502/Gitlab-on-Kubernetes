@@ -54,11 +54,11 @@ spec:
           value: "master"
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "250m"
+            memory: "256Mi"
+            cpu: "100m"
           limits:
-            memory: "4Gi"
-            cpu: "2"
+            memory: "1Gi"
+            cpu: "500m"
         ports:
         - containerPort: 5432
         volumeMounts:

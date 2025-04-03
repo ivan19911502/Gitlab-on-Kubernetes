@@ -77,8 +77,8 @@ spec:
             memory: "2Gi"
             cpu: "500m"
           limits:
-            memory: "6Gi"
-            cpu: "4"
+            memory: "4Gi"
+            cpu: "2"
         ports:
         - containerPort: 8181
         volumeMounts:
