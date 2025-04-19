@@ -50,5 +50,5 @@ data:
     postgres_exporter['enable'] = false
     gitlab_exporter['enable'] = false
     prometheus_monitoring['enable'] = false
-    grafana['enable'] = false
+#    grafana['enable'] = false
     

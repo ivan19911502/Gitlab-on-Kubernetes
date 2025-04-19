@@ -4,12 +4,21 @@ metadata:
   name: gitlab-ce-gitlab-pv
   namespace: gitlab
 spec:
+  storageClassName: local
   capacity:
     storage: 20Gi
   accessModes: 
     - ReadWriteOnce
   hostPath:
     path: /data/gitlab
+  nodeAffinity:  
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node2
 
 
 
@@ -21,12 +30,21 @@ metadata:
   name: gitlab-log-pv
   namespace: gitlab
 spec:
+  storageClassName: local
   capacity:
     storage: 5Gi
   accessModes: 
     - ReadWriteOnce
   hostPath:
     path: /data/gitlab-log
+  nodeAffinity:  
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node2
 
 ---
 
