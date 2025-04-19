@@ -4,12 +4,21 @@ metadata:
   name: postgres-master-gitlab-pv
   namespace: gitlab
 spec:
+  storageClassName: local
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
     path: /data/db/postgres-master-gitlab
+  nodeAffinity:  
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node2
      
   
 ---
@@ -34,12 +43,21 @@ metadata:
   name: postgres-replica-gitlab-pv
   namespace: gitlab
 spec:
+  storageClassName: local
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
     path: /data/db/postgres-replica-gitlab
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node3
      
 
 ---
