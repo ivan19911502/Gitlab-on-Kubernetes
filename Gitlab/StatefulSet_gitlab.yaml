@@ -18,7 +18,7 @@ spec:
         kubernetes.io/hostname: node2
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:17.9.1-ce.0
+        image: gitlab/gitlab-ce:17.11.0-ce.0
         env:                                           
         # # This is a free-form env var that GitLab Omnibus uses to configure
         # everything. We're passing this in from a configmap and pulling some
@@ -82,7 +82,10 @@ spec:
             memory: "4Gi"
             cpu: "2"
         ports:
-        - containerPort: 8181
+        - name: ssh
+          containerPort: 22
+        - name: http
+          containerPort: 8181
         volumeMounts:
         - name: gitlab-storage
           mountPath: /var/opt/gitlab
