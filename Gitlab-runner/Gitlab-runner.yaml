@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-runner
+  namespace: gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab-runner
+  template:
+    metadata:
+      labels:
+        app: gitlab-runner
+    spec:
+      serviceAccountName: gitlab-runner
+      containers:
+      - name: gitlab-runner
+        image: gitlab/gitlab-runner:ubuntu-v17.8.4
+        imagePullPolicy: Always
+        env:
+        - name: RUNNER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gitlab-runner-token
+              key: runner-token
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "2"
+        args:
+        - "run"
+        - "--user=gitlab-runner"
+        - "--working-directory=/home/gitlab-runner"
+        - "--config=/etc/gitlab-runner/config.toml"
+        - "--listen-address=:9252"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/gitlab-runner
+        - name: var-run-docker-sock
+          mountPath: /var/run/docker.sock
+      volumes:
+      - name: config-volume
+        configMap:
+          name: gitlab-runner-config
+      - name: var-run-docker-sock
+        hostPath:
+          path: /var/run/docker.sock

@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-rb
+  namespace: gitlab
+data:
+  gitlab_omnibus_config: |
+    external_url 'https://gitlab.taska.space'
+    gitlab_rails['initial_root_password'] = ENV['GITLAB_ROOT_PASSWORD']
+    gitlab_rails['db_adapter'] = ENV['DB_ADAPTER']
+    gitlab_rails['db_encoding'] = ENV['DB_ENCODING'] 
+    gitlab_rails['db_host'] = ENV['DB_HOST']
+    gitlab_rails['db_port'] = ENV['DB_PORT']
+    gitlab_rails['db_username'] = ENV['DB_USERNAME']
+    gitlab_rails['db_password'] = ENV['DB_PASSWORD']
+    gitlab_rails['db_database'] = ENV['DB_DATABASE']
+    postgresql['enable'] = false
+
+    nginx['redirect_http_to_https'] = false
+    gitlab_rails['gitlab_https'] = false
+
+    gitlab_rails['gitlab_shell_ssh_port'] = 30022  # port SSH NodePort
+    gitlab_rails['gitlab_ssh_host'] = 'gitlab.taska.space'  
+
+    redis['enable'] = false
+    gitlab_rails['redis_host'] = 'redis-master'
+    gitlab_rails['redis_port'] = 6379
+    gitlab_rails['redis_socket'] = '/tmp/redis.sock'
+    gitlab_rails['redis_password'] = 'Securep@55Here'
+    
+
+    gitlab_rails['auto_migrate'] = true
+    gitlab_rails['db_migrate'] = true
+
+    gitlab_workhorse['listen_network'] = "tcp"
+    gitlab_workhorse['listen_addr'] = "0.0.0.0:8181"
+
+    gitlab_rails['smtp_enable'] = true
+    gitlab_rails['smtp_address'] = "smtp.gmail.com"
+    gitlab_rails['smtp_port'] = 587
+    gitlab_rails['smtp_user_name'] = "@gmail.com"
+    gitlab_rails['smtp_password'] = "pass"
+    gitlab_rails['smtp_domain'] = "smtp.gmail.com"
+    gitlab_rails['smtp_authentication'] = "login"
+    gitlab_rails['smtp_enable_starttls_auto'] = true
+    gitlab_rails['smtp_tls'] = false
+    gitlab_rails['gitlab_email_from'] = 'e@gmail.com'
+    
+
+
+
+    # timezone
+    gitlab_rails['time_zone'] = 'Asia/Dhaka'
+
+    # disable heavy features
+    nginx['enable'] = false
+    logrotate['enable'] = false
+    gitlab_kas['enable'] = false
+    monitoring_role['enable'] = false
+    prometheus['enable'] = false
+    alertmanager['enable'] = false
+    node_exporter['enable'] = false
+    redis_exporter['enable'] = false
+    postgres_exporter['enable'] = false
+    gitlab_exporter['enable'] = false
+    prometheus_monitoring['enable'] = false
+#    grafana['enable'] = false
+    
