@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-master
+  namespace: gitlab
+data:
+  redis.conf: |
+    appendonly no
+    requirepass  Securep@55Here
+    protected-mode no
+    

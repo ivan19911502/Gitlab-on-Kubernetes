@@ -1,0 +1,36 @@
+# ConfigMap for settings PostgreSQL
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-master-config
+  namespace: gitlab
+data:
+  postgresql.conf: |
+    # WAL config
+    listen_addresses = '*'
+    wal_level = replica  
+    max_wal_size = 1GB        # Maximum size of WAL files before automatic cleaning
+    min_wal_size = 80MB       # Min size of WAL files 
+    wal_keep_size = 512MB    
+    
+    # setting replica
+    max_wal_senders = 10         
+    max_replication_slots = 10
+    
+    # setting performance
+    shared_buffers = 256MB
+    effective_cache_size = 1GB
+    maintenance_work_mem = 64MB
+    checkpoint_completion_target = 0.9
+    
+    # setting reliability
+    synchronous_commit = on
+    full_page_writes = on
+
+  pg_hba.conf: |
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+    local   all            all                                     trust
+    host    all            all             127.0.0.1/32           md5
+    host    all            all             ::1/128                md5
+    host    all            all             0.0.0.0/0              md5
+    host    replication    gitlab          0.0.0.0/0              md5

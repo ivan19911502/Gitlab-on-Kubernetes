@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-master-gitlab
+  namespace: gitlab
+spec:
+  serviceName: "postgres-master"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      role: master
+  template:
+    metadata:
+      labels:
+        app: postgres
+        role: master
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: node2
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100 
+            podAffinityTerm:  
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - postgres
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: postgres
+        image: postgres:17.2
+        args: ["-c", "config_file=/etc/postgres/postgresql.conf", "-c", "hba_file=/etc/postgres/pg_hba.conf"]
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: db_username  
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: secret-for-postgres-gitlab
+              key: db_database
+        - name: REPLICATION_MODE
+          value: "master"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /etc/postgres/postgresql.conf
+          subPath: postgresql.conf
+        - name: postgres-config
+          mountPath: /etc/postgres/pg_hba.conf
+          subPath: pg_hba.conf
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-master-gitlab-pvc
+      - name: postgres-config
+        configMap:
+          name: postgres-master-config
+          defaultMode: 0775

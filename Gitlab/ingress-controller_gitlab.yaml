@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  rules:
+    - host: 'gitlab.taska.space'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix  
+            backend:
+              service:        
+                name: gitlab-ce
+                port:
+                  number: 80

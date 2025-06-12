@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-ce-gitlab-pv
+  namespace: gitlab
+spec:
+  storageClassName: local
+  capacity:
+    storage: 20Gi
+  accessModes: 
+    - ReadWriteOnce
+  hostPath:
+    path: /data/gitlab
+  nodeAffinity:  
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node2
+
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-log-pv
+  namespace: gitlab
+spec:
+  storageClassName: local
+  capacity:
+    storage: 5Gi
+  accessModes: 
+    - ReadWriteOnce
+  hostPath:
+    path: /data/gitlab-log
+  nodeAffinity:  
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node2
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-ce-gitlab-pvc
+  namespace: gitlab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-log-pvc
+  namespace: gitlab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
