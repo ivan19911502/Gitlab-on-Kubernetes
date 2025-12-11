@@ -3,7 +3,14 @@ kind: Ingress
 metadata:
   name: gitlab
   namespace: gitlab
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - gitlab.taska.space
   rules:
     - host: 'gitlab.taska.space'
       http:
